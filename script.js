@@ -20,13 +20,23 @@ function fetchRepoFiles() {
     .then(data => {
         let filesList = document.getElementById('repoFiles');
         filesList.innerHTML = ''; // 清空当前内容
-        data.forEach(file => {
-            if(file.type === 'file'){ // 确保只处理文件
+        data.forEach(item => {
+            if (item.type === 'file') {
+                // 处理文件
                 let listItem = document.createElement('div');
-                listItem.textContent = file.name;
+                listItem.textContent = item.name;
                 listItem.className = 'file-item';
                 listItem.addEventListener('click', function() {
-                    fetchFileContent(file.path);
+                    fetchFileContent(item.path);
+                });
+                filesList.appendChild(listItem);
+            } else if (item.type === 'dir') {
+                // 处理文件夹
+                let listItem = document.createElement('div');
+                listItem.textContent = item.name;
+                listItem.className = 'file-item dir';
+                listItem.addEventListener('click', function() {
+                    fetchFolderContent(item.path);
                 });
                 filesList.appendChild(listItem);
             }
@@ -34,6 +44,7 @@ function fetchRepoFiles() {
     })
     .catch(error => console.error('Error:', error));
 }
+
 
 // 获取并显示文件内容
 function fetchFileContent(filePath) {
@@ -44,6 +55,7 @@ function fetchFileContent(filePath) {
         // 注意：GitHub Content API 返回的内容经过 Base64 编码，需要解码
         let decodedContent = atob(data.content);
         contentDiv.innerHTML = '<pre>' + decodedContent + '</pre>';
+        console.log('Fetching content for folder:', folderPath);
     })
     .catch(error => console.error('Error:', error));
 }
