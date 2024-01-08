@@ -37,14 +37,14 @@ function fetchRepoFiles() {
 
 // 获取并显示文件内容
 function fetchFileContent(filePath) {
-    fetch(`https://raw.githubusercontent.com/Cjj5201314/Cjj5201314.github.io/main/${filePath}`)
-    .then(response => response.text())
+    fetch(`https://api.github.com/repos/Cjj5201314/Cjj5201314.github.io/contents/${filePath}`)
+    .then(response => response.json())
     .then(data => {
         let contentDiv = document.getElementById('content');
-        contentDiv.innerHTML = '<pre>' + data + '</pre>'; // 使用 <pre> 标签以保留文件格式
+        // 注意：GitHub Content API 返回的内容经过 Base64 编码，需要解码
+        let decodedContent = atob(data.content);
+        contentDiv.innerHTML = '<pre>' + decodedContent + '</pre>';
     })
     .catch(error => console.error('Error:', error));
 }
 
-// 页面加载完成后，调用fetchRepoFiles
-window.onload = fetchRepoFiles;
