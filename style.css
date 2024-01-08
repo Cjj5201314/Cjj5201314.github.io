@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* 添加您的样式 */
 .sidebar {
     width: 250px;
@@ -34,3 +35,41 @@
         display: block;
     }
 }
+=======
+/* 添加您的样式 */
+.sidebar {
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow: auto;
+    background-color: #f0f0f0;
+    transition: all 0.3s;
+}
+
+.content {
+    margin-left: 250px;
+    padding: 1em;
+}
+
+.toggle-button {
+    display: none;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+@media (max-width: 600px) {
+    .sidebar {
+        width: 0;
+        visibility: hidden;
+    }
+    .content {
+        margin-left: 0;
+    }
+    .toggle-button {
+        display: block;
+    }
+}
+>>>>>>> 87fa5fe7c1deeecb68c07bb60d01e61528842cc1
