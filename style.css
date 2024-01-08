@@ -34,3 +34,14 @@
         display: block;
     }
 }
+
+.file-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #ccc;
+}
+
+.file-item:hover {
+    background-color: #f0f0f0;
+}
+
