@@ -1,3 +1,4 @@
+// 切换侧边栏的显示和隐藏
 document.getElementById('toggleButton').addEventListener('click', function() {
     var sidebar = document.getElementById('sidebar');
     var content = document.getElementById('content');
@@ -12,26 +13,29 @@ document.getElementById('toggleButton').addEventListener('click', function() {
     }
 });
 
+// 获取仓库中“学习资料”文件夹的内容
 function fetchRepoFiles() {
-    // 仅获取“学习资料”文件夹中的内容
     fetch('https://api.github.com/repos/Cjj5201314/Cjj5201314.github.io/contents/学习资料')
     .then(response => response.json())
     .then(data => {
         let filesList = document.getElementById('repoFiles');
         filesList.innerHTML = ''; // 清空当前内容
         data.forEach(file => {
-            let listItem = document.createElement('div');
-            listItem.textContent = file.name;
-            listItem.className = 'file-item'; // 添加类名以便添加样式
-            listItem.addEventListener('click', function() {
-                fetchFileContent(file.path);
-            });
-            filesList.appendChild(listItem);
+            if(file.type === 'file'){ // 确保只处理文件
+                let listItem = document.createElement('div');
+                listItem.textContent = file.name;
+                listItem.className = 'file-item';
+                listItem.addEventListener('click', function() {
+                    fetchFileContent(file.path);
+                });
+                filesList.appendChild(listItem);
+            }
         });
     })
     .catch(error => console.error('Error:', error));
 }
 
+// 获取并显示文件内容
 function fetchFileContent(filePath) {
     fetch(`https://raw.githubusercontent.com/Cjj5201314/Cjj5201314.github.io/main/${filePath}`)
     .then(response => response.text())
@@ -42,5 +46,5 @@ function fetchFileContent(filePath) {
     .catch(error => console.error('Error:', error));
 }
 
-// 当页面加载完毕时，获取文件列表
+// 页面加载完成后，调用fetchRepoFiles
 window.onload = fetchRepoFiles;
