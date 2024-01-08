@@ -15,48 +15,45 @@ document.getElementById('toggleButton').addEventListener('click', function() {
 
 // 获取仓库中“学习资料”文件夹的内容
 function fetchRepoFiles() {
-    fetch('https://api.github.com/repos/Cjj5201314/Cjj5201314.github.io/contents/学习资料')
+    const apiUrl = 'https://api.github.com/repos/Cjj5201314/Cjj5201314.github.io/contents/学习资料';
+    console.log('Fetching files from:', apiUrl); // 输出URL以便检查
+    fetch(apiUrl)
     .then(response => response.json())
     .then(data => {
+        console.log('Files fetched:', data); // 输出获取到的文件列表
         let filesList = document.getElementById('repoFiles');
-        filesList.innerHTML = ''; // 清空当前内容
-        data.forEach(item => {
-            if (item.type === 'file') {
-                // 处理文件
+        filesList.innerHTML = '';
+        data.forEach(file => {
+            if(file.type === 'file'){
                 let listItem = document.createElement('div');
-                listItem.textContent = item.name;
+                listItem.textContent = file.name;
                 listItem.className = 'file-item';
                 listItem.addEventListener('click', function() {
-                    fetchFileContent(item.path);
-                });
-                filesList.appendChild(listItem);
-            } else if (item.type === 'dir') {
-                // 处理文件夹
-                let listItem = document.createElement('div');
-                listItem.textContent = item.name;
-                listItem.className = 'file-item dir';
-                listItem.addEventListener('click', function() {
-                    fetchFolderContent(item.path);
+                    fetchFileContent(file.path);
                 });
                 filesList.appendChild(listItem);
             }
         });
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+        console.error('Error fetching files:', error);
+    });
 }
-
 
 // 获取并显示文件内容
 function fetchFileContent(filePath) {
-    fetch(`https://api.github.com/repos/Cjj5201314/Cjj5201314.github.io/contents/${filePath}`)
+    const apiUrl = `https://api.github.com/repos/Cjj5201314/Cjj5201314.github.io/contents/${filePath}`;
+    console.log('Fetching content from:', apiUrl); // 输出URL以便检查
+    fetch(apiUrl)
     .then(response => response.json())
     .then(data => {
+        console.log('File content fetched:', data); // 输出获取到的文件内容
         let contentDiv = document.getElementById('content');
-        // 注意：GitHub Content API 返回的内容经过 Base64 编码，需要解码
         let decodedContent = atob(data.content);
         contentDiv.innerHTML = '<pre>' + decodedContent + '</pre>';
-        console.log('Fetching content for folder:', folderPath);
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+        console.error('Error fetching file content:', error);
+    });
 }
 
