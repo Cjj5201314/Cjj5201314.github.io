@@ -44,6 +44,7 @@ function fetchRepoFiles(path = '学习资料') {
         })
         .catch(error => {
             console.error('Error fetching files:', error);
+            console.log('Data type:', typeof data);
         });
 }
 
