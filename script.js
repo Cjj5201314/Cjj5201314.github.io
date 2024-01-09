@@ -16,23 +16,19 @@ document.getElementById('toggleButton').addEventListener('click', function() {
 // 获取仓库中“学习资料”文件夹的内容
 function fetchRepoFiles(path = '学习资料') {
     const apiUrl = `https://api.github.com/repos/Cjj5201314/Cjj5201314.github.io/contents/${path}`;
-    console.log('Fetching files from:', apiUrl); // 输出URL以便检查
     fetch(apiUrl)
     .then(response => response.json())
     .then(data => {
-        console.log('Data fetched:', data); // 输出获取到的数据
         let filesList = document.getElementById('repoFiles');
-        filesList.innerHTML = ''; // 清空当前内容
+        filesList.innerHTML = '';
         data.forEach(item => {
             let listItem = document.createElement('div');
             listItem.textContent = item.name;
             listItem.className = item.type === 'file' ? 'file-item' : 'dir-item';
             listItem.addEventListener('click', () => {
                 if (item.type === 'file') {
-                    // 是文件，获取内容
                     fetchFileContent(item.path);
                 } else {
-                    // 是目录，获取目录内的文件
                     fetchRepoFiles(item.path);
                 }
             });
@@ -47,23 +43,20 @@ function fetchRepoFiles(path = '学习资料') {
 // 获取并显示文件内容
 function fetchFileContent(filePath) {
     const apiUrl = `https://api.github.com/repos/Cjj5201314/Cjj5201314.github.io/contents/${filePath}`;
-    console.log('Fetching content from:', apiUrl); // 输出URL以便检查
     fetch(apiUrl)
     .then(response => response.json())
     .then(data => {
-        // 提取文件内容的下载链接
         const downloadUrl = data.download_url;
-        console.log('Fetching content from:', downloadUrl); // 输出URL以便检查
         return fetch(downloadUrl);
     })
     .then(response => response.text())
     .then(content => {
-        console.log('File content fetched:', content); // 输出获取到的文件内容
         let contentDiv = document.getElementById('content');
-        contentDiv.innerHTML = '<pre>' + content + '</pre>'; // 显示文件内容
+        contentDiv.innerHTML = '<pre>' + content + '</pre>';
     })
     .catch(error => {
         console.error('Error fetching file content:', error);
     });
 }
+
 
