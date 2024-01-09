@@ -46,10 +46,17 @@ function fetchRepoFiles(path = '学习资料') {
 
 // 获取并显示文件内容
 function fetchFileContent(filePath) {
-    const apiUrl = `https://raw.githubusercontent.com/Cjj5201314/Cjj5201314.github.io/main/${filePath}`;
+    const apiUrl = `https://api.github.com/repos/Cjj5201314/Cjj5201314.github.io/contents/${filePath}`;
     console.log('Fetching content from:', apiUrl); // 输出URL以便检查
     fetch(apiUrl)
-    .then(response => response.text()) // 直接获取文本，不用json()
+    .then(response => response.json())
+    .then(data => {
+        // 提取文件内容的下载链接
+        const downloadUrl = data.download_url;
+        console.log('Fetching content from:', downloadUrl); // 输出URL以便检查
+        return fetch(downloadUrl);
+    })
+    .then(response => response.text())
     .then(content => {
         console.log('File content fetched:', content); // 输出获取到的文件内容
         let contentDiv = document.getElementById('content');
@@ -59,3 +66,4 @@ function fetchFileContent(filePath) {
         console.error('Error fetching file content:', error);
     });
 }
+
