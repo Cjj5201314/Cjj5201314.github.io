@@ -28,23 +28,26 @@ function fetchRepoFiles(path = '学习资料') {
         .then(data => {
             let filesList = document.getElementById('repoFiles');
             filesList.innerHTML = '';
-            data.forEach(item => {
-                let listItem = document.createElement('div');
-                listItem.textContent = item.name;
-                listItem.className = item.type === 'file' ? 'file-item' : 'dir-item';
-                listItem.addEventListener('click', () => {
-                    if (item.type === 'file') {
-                        fetchFileContent(item.path);
-                    } else {
-                        fetchRepoFiles(item.path);
-                    }
+            if (Array.isArray(data)) {
+                data.forEach(item => {
+                    let listItem = document.createElement('div');
+                    listItem.textContent = item.name;
+                    listItem.className = item.type === 'file' ? 'file-item' : 'dir-item';
+                    listItem.addEventListener('click', () => {
+                        if (item.type === 'file') {
+                            fetchFileContent(item.path);
+                        } else {
+                            fetchRepoFiles(item.path);
+                        }
+                    });
+                    filesList.appendChild(listItem);
                 });
-                filesList.appendChild(listItem);
-            });
+            } else {
+                console.error('Data is not an array:', data);
+            }
         })
         .catch(error => {
             console.error('Error fetching files:', error);
-            console.log('Data type:', typeof data);
         });
 }
 
