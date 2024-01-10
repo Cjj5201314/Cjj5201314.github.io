@@ -13,17 +13,11 @@ document.getElementById('toggleButton').addEventListener('click', function() {
     }
 });
 
-// GitHub API 认证令牌
-const accessToken = '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';
-
 // 获取仓库中“学习资料”文件夹的内容
 function fetchRepoFiles(path = '学习资料') {
     const apiUrl = `https://api.github.com/repos/Cjj5201314/Cjj5201314.github.io/contents/${path}`;
-    const headers = {
-        'Authorization': `token ${accessToken}`
-    };
 
-    fetch(apiUrl, { headers: headers })
+    fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
             let filesList = document.getElementById('repoFiles');
@@ -54,11 +48,8 @@ function fetchRepoFiles(path = '学习资料') {
 // 获取并显示文件内容
 function fetchFileContent(filePath) {
     const apiUrl = `https://api.github.com/repos/Cjj5201314/Cjj5201314.github.io/contents/${filePath}`;
-    const headers = {
-        'Authorization': `token ${accessToken}`
-    };
 
-    fetch(apiUrl, { headers: headers })
+    fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
             if (Array.isArray(data) && data.length > 0) {
