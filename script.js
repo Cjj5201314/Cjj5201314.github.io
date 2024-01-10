@@ -14,7 +14,7 @@ document.getElementById('toggleButton').addEventListener('click', function() {
 });
 
 // GitHub API 认证令牌
-const accessToken = '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';
+const accessToken = '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';
 
 // 获取仓库中“学习资料”文件夹的内容
 function fetchRepoFiles(path = '学习资料') {
