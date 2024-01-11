@@ -80,9 +80,14 @@ function fetchFileContent(filePath) {
         })
         .then(response => response.text())
         .then(content => {
-            let contentDiv = document.getElementById('content');
-            contentDiv.innerHTML = marked(content); // 使用 marked.js 转换 Markdown
-            contentDiv.classList.add('markdown-content'); // 添加类名用于样式
+            // 使用 marked.js 转换 Markdown
+            if (typeof marked === 'function') {
+                let contentDiv = document.getElementById('content');
+                contentDiv.innerHTML = marked(content);
+                contentDiv.classList.add('markdown-content'); // 添加类名用于样式
+            } else {
+                console.error('marked is not available');
+            }
         })
         .catch(error => {
             console.error('Error fetching file content:', error);
@@ -90,4 +95,6 @@ function fetchFileContent(filePath) {
 }
 
 // 初始加载学习资料
-fetchRepoFiles();
+window.onload = function() {
+    fetchRepoFiles();
+};
