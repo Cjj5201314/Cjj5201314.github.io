@@ -81,7 +81,8 @@ function fetchFileContent(filePath) {
         .then(response => response.text())
         .then(content => {
             let contentDiv = document.getElementById('content');
-            contentDiv.innerHTML = '<pre>' + content + '</pre>';
+            contentDiv.innerHTML = marked(content); // 使用 marked.js 转换 Markdown
+            contentDiv.classList.add('markdown-content'); // 添加类名用于样式
         })
         .catch(error => {
             console.error('Error fetching file content:', error);
