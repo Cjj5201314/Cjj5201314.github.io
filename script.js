@@ -40,7 +40,8 @@ function fetchRepoFiles(path = currentPath) {
                 }
 
                 data.forEach(item => {
-                    let listItem = document.createElement('div');
+                    // 将 listItem 定义为全局变量，以便在 fetchFileContent 中访问
+                    listItem = document.createElement('div');
                     listItem.textContent = item.name;
                     listItem.className = item.type === 'file' ? 'file-item' : 'dir-item';
                     listItem.addEventListener('click', () => {
