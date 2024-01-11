@@ -55,3 +55,11 @@
     background-color: #f0f0f0;
 }
 
+.dir-item, .file-item {
+    /* ... 保留您已有的样式 ... */
+    transition: background-color 0.3s; /* 添加平滑过渡效果 */
+}
+
+.dir-item:hover, .file-item:hover, .dir-item.selected, .file-item.selected {
+    background-color: #cce5ff; /* 鼠标悬停或选中时的背景色 */
+}
