@@ -14,7 +14,9 @@ document.getElementById('toggleButton').addEventListener('click', function() {
 });
 
 // 获取仓库中“学习资料”文件夹的内容
-function fetchRepoFiles(path = '学习资料') {
+let currentPath = '学习资料'; // 添加全局变量记录当前路径
+
+function fetchRepoFiles(path = currentPath) {
     const apiUrl = `https://api.github.com/repos/Cjj5201314/Cjj5201314.github.io/contents/${path}`;
 
     fetch(apiUrl)
@@ -23,6 +25,20 @@ function fetchRepoFiles(path = '学习资料') {
             let filesList = document.getElementById('repoFiles');
             filesList.innerHTML = '';
             if (Array.isArray(data)) {
+                if (currentPath !== '学习资料') {
+                    // 添加返回上级目录按钮
+                    let backBtn = document.createElement('div');
+                    backBtn.textContent = '返回上级目录';
+                    backBtn.className = 'dir-item';
+                    backBtn.addEventListener('click', () => {
+                        let parts = currentPath.split('/');
+                        parts.pop(); // 移除最后一级目录
+                        currentPath = parts.join('/');
+                        fetchRepoFiles(currentPath);
+                    });
+                    filesList.appendChild(backBtn);
+                }
+
                 data.forEach(item => {
                     let listItem = document.createElement('div');
                     listItem.textContent = item.name;
@@ -31,6 +47,7 @@ function fetchRepoFiles(path = '学习资料') {
                         if (item.type === 'file') {
                             fetchFileContent(item.path);
                         } else {
+                            currentPath = item.path;
                             fetchRepoFiles(item.path);
                         }
                     });
