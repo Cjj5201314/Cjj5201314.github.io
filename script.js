@@ -94,6 +94,28 @@ function fetchFileContent(filePath) {
         });
 }
 
+// 在点击文件或目录项时，添加选中效果
+function addClickEffect(itemElement) {
+    // 先移除其他所有项的selected类
+    document.querySelectorAll('.dir-item, .file-item').forEach(item => {
+        item.classList.remove('selected');
+    });
+    // 为点击的项添加selected类
+    itemElement.classList.add('selected');
+}
+
+// 修改您的事件监听器，加入调用addClickEffect的逻辑
+listItem.addEventListener('click', () => {
+    if (item.type === 'file') {
+        fetchFileContent(item.path);
+        addClickEffect(listItem); // 添加这一行
+    } else {
+        currentPath = item.path;
+        fetchRepoFiles(item.path);
+        addClickEffect(listItem); // 添加这一行
+    }
+});
+
 // 初始加载学习资料
 window.onload = function() {
     fetchRepoFiles();
