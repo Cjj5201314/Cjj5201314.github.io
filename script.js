@@ -14,9 +14,7 @@ document.getElementById('toggleButton').addEventListener('click', function() {
 });
 
 // 获取仓库中“学习资料”文件夹的内容
-let currentPath = '学习资料'; // 添加全局变量记录当前路径
-
-function fetchRepoFiles(path = currentPath) {
+function fetchRepoFiles(path = '学习资料') {
     const apiUrl = `https://api.github.com/repos/Cjj5201314/Cjj5201314.github.io/contents/${path}`;
 
     fetch(apiUrl)
@@ -24,34 +22,23 @@ function fetchRepoFiles(path = currentPath) {
         .then(data => {
             let filesList = document.getElementById('repoFiles');
             filesList.innerHTML = '';
-            if (Array.isArray(data)) {
-                if (currentPath !== '学习资料') {
-                    // 添加返回上级目录按钮
-                    let backBtn = document.createElement('div');
-                    backBtn.textContent = '返回上级目录';
-                    backBtn.className = 'dir-item';
-                    backBtn.addEventListener('click', () => {
-                        let parts = currentPath.split('/');
-                        parts.pop(); // 移除最后一级目录
-                        currentPath = parts.join('/');
-                        fetchRepoFiles(currentPath);
-                    });
-                    filesList.appendChild(backBtn);
-                }
 
+            if (Array.isArray(data)) {
+                // 移除了添加返回上级目录按钮的代码块
                 data.forEach(item => {
-                    // 将 listItem 定义为全局变量，以便在 fetchFileContent 中访问
-                    listItem = document.createElement('div');
+                    let listItem = document.createElement('div');
                     listItem.textContent = item.name;
                     listItem.className = item.type === 'file' ? 'file-item' : 'dir-item';
+
                     listItem.addEventListener('click', () => {
                         if (item.type === 'file') {
                             fetchFileContent(item.path);
                         } else {
-                            currentPath = item.path;
+                            currentPath = item.path; // 更新currentPath为点击的目录
                             fetchRepoFiles(item.path);
                         }
                     });
+
                     filesList.appendChild(listItem);
                 });
             } else {
