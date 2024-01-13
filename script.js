@@ -18,7 +18,7 @@ function buildDirectoryTree(data, parentPath = '') {
                     listItem.classList.remove('expanded');
                 }
             });
-        } else {
+        } else if (item.name.endsWith('.md')) {
             listItem.addEventListener('click', function() {
                 fetchFileContent(`${parentPath}/${item.name}`);
             });
