@@ -1,65 +1,66 @@
-// 切换侧边栏的显示和隐藏
-document.getElementById('toggleButton').addEventListener('click', function () {
-    var sidebar = document.getElementById('sidebar');
-    var content = document.getElementById('content');
-    if (sidebar.style.width === '250px') {
-        sidebar.style.width = '0';
-        sidebar.style.visibility = 'hidden';
-        content.style.marginLeft = '0';
-    } else {
-        sidebar.style.width = '250px';
-        sidebar.style.visibility = 'visible';
-        content.style.marginLeft = '250px';
-    }
-});
-
-// 构建树形结构
-function buildTree(data, parentElement) {
+function buildDirectoryTree(data, parentElement) {
     let tree = document.createElement('ul');
+    tree.className = 'directory-tree';
 
     data.forEach(item => {
         let listItem = document.createElement('li');
-        listItem.textContent = item.name;
+        let textNode = document.createTextNode(item.name);
+        listItem.appendChild(textNode);
         listItem.className = item.type === 'file' ? 'file-item' : 'dir-item';
 
-        listItem.addEventListener('click', () => {
-            if (item.type === 'file') {
-                fetchFileContent(item.path);
-            } else {
-                currentPath = item.path; // 更新currentPath为点击的目录
-                fetchRepoFiles(item.path);
-            }
-        });
+        if (item.type === 'dir') {
+            listItem.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (!listItem.classList.contains('expanded')) {
+                    fetchRepoFiles(item.path, listItem);
+                } else {
+                    let subTree = listItem.getElementsByTagName('ul')[0];
+                    listItem.removeChild(subTree);
+                    listItem.classList.remove('expanded');
+                }
+            });
 
-        if (item.type === 'dir' && Array.isArray(item.children) && item.children.length > 0) {
-            let childTree = buildTree(item.children, listItem);
-            listItem.appendChild(childTree);
+            // 如果目录下有子目录或文件，添加一个占位元素
+            if (item.children && item.children.length > 0) {
+                let placeholder = document.createElement('div');
+                placeholder.className = 'placeholder';
+                listItem.appendChild(placeholder);
+            }
+        } else if (item.name.endsWith('.md')) {
+            listItem.addEventListener('click', function() {
+                fetchFileContent(item.path);
+            });
         }
 
         tree.appendChild(listItem);
     });
 
-    parentElement.appendChild(tree);
+    if (parentElement) {
+        parentElement.appendChild(tree);
+        parentElement.classList.add('expanded');
+    } else {
+        let filesList = document.getElementById('repoFiles');
+        filesList.innerHTML = '';
+        filesList.appendChild(tree);
+    }
+
+    return tree;
 }
 
-// 获取仓库中“学习资料”文件夹的内容
-function fetchRepoFiles(path = '学习资料') {
+function fetchRepoFiles(path = '学习资料', parentElement) {
     const apiUrl = `https://api.github.com/repos/Cjj5201314/Cjj5201314.github.io/contents/${path}`;
 
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-            let filesList = document.getElementById('repoFiles');
-            filesList.innerHTML = '';
-
             if (Array.isArray(data)) {
-                buildTree(data, filesList);
+                buildDirectoryTree(data, parentElement);
             } else {
                 console.error('Data is not an array:', data);
             }
         })
         .catch(error => {
-            console.error('Error fetching files:', error);
+            console.error('Error fetching directory:', error);
         });
 }
 
@@ -101,6 +102,6 @@ function fetchFileContent(filePath) {
 }
 
 // 初始加载学习资料
-window.onload = function () {
+window.onload = function() {
     fetchRepoFiles();
 };
