@@ -1,5 +1,5 @@
 // 切换侧边栏的显示和隐藏
-document.getElementById('toggleButton').addEventListener('click', function() {
+document.getElementById('toggleButton').addEventListener('click', function () {
     var sidebar = document.getElementById('sidebar');
     var content = document.getElementById('content');
     if (sidebar.style.width === '250px') {
@@ -13,27 +13,27 @@ document.getElementById('toggleButton').addEventListener('click', function() {
     }
 });
 
-// 递归构建树形结构
+// 构建树形结构
 function buildTree(data, parentElement) {
     let tree = document.createElement('ul');
 
     data.forEach(item => {
         let listItem = document.createElement('li');
-        let textNode = document.createTextNode(item.name);
-        listItem.appendChild(textNode);
+        listItem.textContent = item.name;
         listItem.className = item.type === 'file' ? 'file-item' : 'dir-item';
 
         listItem.addEventListener('click', () => {
             if (item.type === 'file') {
                 fetchFileContent(item.path);
             } else {
-                fetchRepoFiles(item.path, listItem);
+                currentPath = item.path; // 更新currentPath为点击的目录
+                fetchRepoFiles(item.path);
             }
         });
 
-        if (item.type === 'dir' && item.children && item.children.length > 0) {
-            let subTree = buildTree(item.children, listItem);
-            listItem.appendChild(subTree);
+        if (item.type === 'dir' && Array.isArray(item.children) && item.children.length > 0) {
+            let childTree = buildTree(item.children, listItem);
+            listItem.appendChild(childTree);
         }
 
         tree.appendChild(listItem);
@@ -43,7 +43,7 @@ function buildTree(data, parentElement) {
 }
 
 // 获取仓库中“学习资料”文件夹的内容
-function fetchRepoFiles(path = '学习资料', parentElement) {
+function fetchRepoFiles(path = '学习资料') {
     const apiUrl = `https://api.github.com/repos/Cjj5201314/Cjj5201314.github.io/contents/${path}`;
 
     fetch(apiUrl)
@@ -71,10 +71,8 @@ function fetchFileContent(filePath) {
         .then(response => response.json())
         .then(data => {
             if (Array.isArray(data) && data.length > 0) {
-                // 如果是目录，递归获取内容
                 fetchRepoFiles(filePath);
             } else {
-                // 如果是文件，获取文件内容
                 const downloadUrl = data.download_url;
                 return fetch(downloadUrl);
             }
@@ -103,6 +101,6 @@ function fetchFileContent(filePath) {
 }
 
 // 初始加载学习资料
-window.onload = function() {
+window.onload = function () {
     fetchRepoFiles();
 };
