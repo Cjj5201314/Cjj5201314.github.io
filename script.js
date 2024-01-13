@@ -83,6 +83,19 @@ function fetchFileContent(filePath) {
         .then(content => {
             // 使用 marked.js 转换 Markdown
             if (typeof marked === 'function') {
+                // 获取文件所在目录路径
+                const fileDirectory = filePath.substring(0, filePath.lastIndexOf('/'));
+
+                // 将图片的相对路径转换为绝对路径
+                const absoluteImagePath = `https://raw.githubusercontent.com/Cjj5201314/Cjj5201314.github.io/master/${fileDirectory}/img/`;
+
+                // 替换 Markdown 中的图片路径
+                content = content.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, path) => {
+                    // 将相对路径转换为绝对路径
+                    const absolutePath = `${absoluteImagePath}${path}`;
+                    return `![${alt}](${absolutePath})`;
+                });
+
                 let contentDiv = document.getElementById('content');
                 contentDiv.innerHTML = marked(content);
                 contentDiv.classList.add('markdown-content'); // 添加类名用于样式
@@ -94,6 +107,7 @@ function fetchFileContent(filePath) {
             console.error('Error fetching file content:', error);
         });
 }
+
 
 // 初始加载学习资料
 window.onload = function() {
