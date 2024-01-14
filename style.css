@@ -63,3 +63,26 @@
 .dir-item:hover, .file-item:hover, .dir-item.selected, .file-item.selected {
     background-color: #cce5ff; /* 鼠标悬停或选中时的背景色 */
 }
+
+/* 添加箭头样式 */
+.tree .expandable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.tree .expandable::before {
+    content: '\25B8'; /* 默认箭头为右箭头 */
+    display: inline-block;
+    margin-right: 5px;
+    transform: rotate(90deg);
+    transition: transform 0.3s ease-in-out;
+}
+
+.tree .expanded::before {
+    transform: rotate(0deg);
+}
+
+/* 添加样式用于突出显示所选的文件 */
+.file-list .selected {
+    background-color: #cce5ff;
+}
