@@ -24,6 +24,7 @@ function buildTree(data, parentElement) {
 
         // 添加箭头图标
         if (item.type === 'dir' && item.children && item.children.length > 0) {
+            listItem.innerHTML = '&#9654;'; // 右箭头表示可以展开
             listItem.classList.add('expandable');
         }
 
@@ -48,7 +49,10 @@ function buildTree(data, parentElement) {
                 listItem.appendChild(subTree);
             }
         } else if (item.name.endsWith('.md')) {
-            listItem.addEventListener('click', function() {
+            listItem.addEventListener('click', function(e) {
+                // 阻止事件传播，避免触发父级目录的点击事件
+                e.stopPropagation();
+
                 // 移除所有已选中项的样式
                 document.querySelectorAll('.file-item.selected').forEach(el => {
                     el.classList.remove('selected');
