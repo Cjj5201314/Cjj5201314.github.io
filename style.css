@@ -24,12 +24,11 @@
 
 /* 添加样式用于突出显示 Markdown 内容 */
 .markdown-content {
-    padding: 16px;
+    padding: 50px;
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center; /* 居中显示 */
 }
 
 
@@ -56,17 +55,33 @@
     background-color: #f0f0f0;
 }
 
-.tree .expandable::before {
-    content: '\25B8'; /* 右箭头表示可以展开 */
+.file-list{
+    padding: 16px;
+}
+
+/* 添加箭头样式 */
+.tree .expandable {
+    cursor: pointer;
+    user-select: none;
+    position: relative; /* 添加相对定位 */
+}
+
+.tree .expandable > span::before {
+    content: '\25B8'; /* 默认箭头为右箭头 */
     display: inline-block;
     margin-right: 5px;
     transform: rotate(90deg);
     transition: transform 0.3s ease-in-out;
+    position: absolute; /* 绝对定位相对于父元素 */
+    left: -15px; /* 调整箭头位置 */
+    top: 50%; /* 竖直居中 */
+    transform: translateY(-50%);
 }
 
-.tree .expanded::before {
+.tree .expanded > span::before {
     transform: rotate(0deg);
 }
+
 
 .file-list .selected {
     background-color: #cce5ff;
