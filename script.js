@@ -2,8 +2,7 @@
 document.getElementById('toggleButton').addEventListener('click', function() {
     var sidebar = document.getElementById('sidebar');
     var content = document.getElementById('content');
-    sidebar.classList.toggle('collapsed');
-    if (sidebar.classList.contains('collapsed')) {
+    if (sidebar.style.width === '250px') {
         sidebar.style.width = '0';
         sidebar.style.visibility = 'hidden';
         content.style.marginLeft = '0';
@@ -21,19 +20,42 @@ function buildTree(data, parentElement) {
 
     data.forEach(item => {
         let listItem = document.createElement('li');
-        listItem.textContent = item.name;
+        let textNode = document.createTextNode(item.name);
+
+        // 添加箭头图标
+        if (item.type === 'dir' && item.children && item.children.length > 0) {
+            listItem.classList.add('expandable');
+        }
+
+        listItem.appendChild(textNode);
         listItem.className = item.type === 'file' ? 'file-item' : 'dir-item';
 
         if (item.type === 'dir') {
-            listItem.classList.add('expandable');
             listItem.addEventListener('click', function(e) {
                 e.stopPropagation();
-                toggleExpand(listItem, item);
+                if (!listItem.classList.contains('expanded')) {
+                    fetchRepoFiles(item.path, listItem);
+                } else {
+                    let subTree = listItem.getElementsByTagName('ul')[0];
+                    listItem.removeChild(subTree);
+                    listItem.classList.remove('expanded');
+                }
             });
+
+            // 如果目录下有子目录或文件，递归构建树形结构
+            if (item.children && item.children.length > 0) {
+                let subTree = buildTree(item.children, listItem);
+                listItem.appendChild(subTree);
+            }
         } else if (item.name.endsWith('.md')) {
-            listItem.addEventListener('click', function(e) {
-                e.stopPropagation(); // 防止事件冒泡
-                highlightSelectedFile(listItem);
+            listItem.addEventListener('click', function() {
+                // 移除所有已选中项的样式
+                document.querySelectorAll('.file-item.selected').forEach(el => {
+                    el.classList.remove('selected');
+                });
+
+                // 为当前点击项添加选中样式
+                listItem.classList.add('selected');
                 fetchFileContent(item.path);
             });
         }
@@ -45,30 +67,12 @@ function buildTree(data, parentElement) {
         parentElement.appendChild(tree);
         parentElement.classList.add('expanded');
     } else {
-        document.getElementById('repoFiles').appendChild(tree);
+        let filesList = document.getElementById('repoFiles');
+        filesList.innerHTML = '';
+        filesList.appendChild(tree);
     }
-}
 
-function toggleExpand(listItem, item) {
-    let expanded = listItem.classList.toggle('expanded');
-    if (expanded) {
-        if (!listItem.querySelector('ul')) {
-            fetchRepoFiles(item.path, listItem);
-        }
-    } else {
-        let subTree = listItem.querySelector('ul');
-        if (subTree) {
-            listItem.removeChild(subTree);
-        }
-    }
-}
-
-function highlightSelectedFile(selectedItem) {
-    let previouslySelected = document.querySelector('.file-item.selected');
-    if (previouslySelected) {
-        previouslySelected.classList.remove('selected');
-    }
-    selectedItem.classList.add('selected');
+    return tree;
 }
 
 // 获取仓库中“学习资料”文件夹的内容
