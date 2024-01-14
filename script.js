@@ -1,66 +1,52 @@
-function buildDirectoryTree(data, parentElement) {
-    let tree = document.createElement('ul');
-    tree.className = 'directory-tree';
-
-    data.forEach(item => {
-        let listItem = document.createElement('li');
-        let textNode = document.createTextNode(item.name);
-        listItem.appendChild(textNode);
-        listItem.className = item.type === 'file' ? 'file-item' : 'dir-item';
-
-        if (item.type === 'dir') {
-            listItem.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (!listItem.classList.contains('expanded')) {
-                    fetchRepoFiles(item.path, listItem);
-                } else {
-                    let subTree = listItem.getElementsByTagName('ul')[0];
-                    listItem.removeChild(subTree);
-                    listItem.classList.remove('expanded');
-                }
-            });
-
-            // 如果目录下有子目录或文件，添加一个占位元素
-            if (item.children && item.children.length > 0) {
-                let placeholder = document.createElement('div');
-                placeholder.className = 'placeholder';
-                listItem.appendChild(placeholder);
-            }
-        } else if (item.name.endsWith('.md')) {
-            listItem.addEventListener('click', function() {
-                fetchFileContent(item.path);
-            });
-        }
-
-        tree.appendChild(listItem);
-    });
-
-    if (parentElement) {
-        parentElement.appendChild(tree);
-        parentElement.classList.add('expanded');
+// 切换侧边栏的显示和隐藏
+document.getElementById('toggleButton').addEventListener('click', function() {
+    var sidebar = document.getElementById('sidebar');
+    var content = document.getElementById('content');
+    if (sidebar.style.width === '250px') {
+        sidebar.style.width = '0';
+        sidebar.style.visibility = 'hidden';
+        content.style.marginLeft = '0';
     } else {
-        let filesList = document.getElementById('repoFiles');
-        filesList.innerHTML = '';
-        filesList.appendChild(tree);
+        sidebar.style.width = '250px';
+        sidebar.style.visibility = 'visible';
+        content.style.marginLeft = '250px';
     }
+});
 
-    return tree;
-}
-
-function fetchRepoFiles(path = '学习资料', parentElement) {
+// 获取仓库中“学习资料”文件夹的内容
+function fetchRepoFiles(path = '学习资料') {
     const apiUrl = `https://api.github.com/repos/Cjj5201314/Cjj5201314.github.io/contents/${path}`;
 
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
+            let filesList = document.getElementById('repoFiles');
+            filesList.innerHTML = '';
+
             if (Array.isArray(data)) {
-                buildDirectoryTree(data, parentElement);
+                // 移除了添加返回上级目录按钮的代码块
+                data.forEach(item => {
+                    let listItem = document.createElement('div');
+                    listItem.textContent = item.name;
+                    listItem.className = item.type === 'file' ? 'file-item' : 'dir-item';
+
+                    listItem.addEventListener('click', () => {
+                        if (item.type === 'file') {
+                            fetchFileContent(item.path);
+                        } else {
+                            currentPath = item.path; // 更新currentPath为点击的目录
+                            fetchRepoFiles(item.path);
+                        }
+                    });
+
+                    filesList.appendChild(listItem);
+                });
             } else {
                 console.error('Data is not an array:', data);
             }
         })
         .catch(error => {
-            console.error('Error fetching directory:', error);
+            console.error('Error fetching files:', error);
         });
 }
 
@@ -72,26 +58,34 @@ function fetchFileContent(filePath) {
         .then(response => response.json())
         .then(data => {
             if (Array.isArray(data) && data.length > 0) {
+                // 如果是目录，递归获取内容
                 fetchRepoFiles(filePath);
             } else {
+                // 如果是文件，获取文件内容
                 const downloadUrl = data.download_url;
                 return fetch(downloadUrl);
             }
         })
         .then(response => response.text())
         .then(content => {
+            // 使用 marked.js 转换 Markdown
             if (typeof marked === 'function') {
+                // 获取文件所在目录路径
                 const fileDirectory = filePath.substring(0, filePath.lastIndexOf('/'));
+
+                // 将图片的相对路径转换为绝对路径
                 const absoluteImagePath = `https://raw.githubusercontent.com/Cjj5201314/Cjj5201314.github.io/master/${fileDirectory}/img/`;
 
+                // 替换 Markdown 中的图片路径
                 content = content.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, path) => {
+                    // 将相对路径转换为绝对路径
                     const absolutePath = `${absoluteImagePath}${path}`;
                     return `![${alt}](${absolutePath})`;
                 });
 
                 let contentDiv = document.getElementById('content');
                 contentDiv.innerHTML = marked(content);
-                contentDiv.classList.add('markdown-content');
+                contentDiv.classList.add('markdown-content'); // 添加类名用于样式
             } else {
                 console.error('marked is not available');
             }
@@ -100,6 +94,7 @@ function fetchFileContent(filePath) {
             console.error('Error fetching file content:', error);
         });
 }
+
 
 // 初始加载学习资料
 window.onload = function() {
