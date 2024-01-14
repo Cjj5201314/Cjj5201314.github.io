@@ -25,12 +25,21 @@
 /* 添加样式用于突出显示 Markdown 内容 */
 .markdown-content {
     padding: 50px;
-    background-color: #fff;
+    width: 1330px;
+    background-color: #6b6666;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 1320; /* 设置最大宽度为父元素宽度 */
+    overflow: hidden; /* 隐藏溢出的内容 */
+    text-overflow: ellipsis; /* 用省略号表示溢出的文本 */
 }
 
+/* 限制图像的最大宽度 */
+.markdown-content img {
+    max-width: 100%; /* 图像的最大宽度为其容器的100% */
+    height: auto; /* 确保图像的高度按比例调整 */
+}
 
 @media (max-width: 600px) {
     .sidebar {
@@ -70,7 +79,6 @@
     content: '\25B8'; /* 默认箭头为右箭头 */
     display: inline-block;
     margin-right: 5px;
-    transform: rotate(90deg);
     transition: transform 0.3s ease-in-out;
     position: absolute; /* 绝对定位相对于父元素 */
     left: -15px; /* 调整箭头位置 */
@@ -79,7 +87,7 @@
 }
 
 .tree .expanded > span::before {
-    transform: rotate(0deg);
+    transform: rotate(90deg); /* 改变箭头朝向 */
 }
 
 
