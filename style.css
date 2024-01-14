@@ -29,6 +29,7 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center; /* 居中显示 */
 }
 
 
@@ -55,38 +56,18 @@
     background-color: #f0f0f0;
 }
 
-.dir-item, .file-item {
-    /* ... 保留您已有的样式 ... */
-    transition: background-color 0.3s; /* 添加平滑过渡效果 */
-}
-
-.dir-item:hover, .file-item:hover, .dir-item.selected, .file-item.selected {
-    background-color: #cce5ff; /* 鼠标悬停或选中时的背景色 */
-}
-
-/* 添加箭头样式 */
-.tree .expandable {
-    cursor: pointer;
-    user-select: none;
-}
-
 .tree .expandable::before {
-    content: '▼'; /* 折叠时的箭头 */
+    content: '\25B8'; /* 右箭头表示可以展开 */
     display: inline-block;
     margin-right: 5px;
+    transform: rotate(90deg);
     transition: transform 0.3s ease-in-out;
 }
 
-.tree .expandable:not(.expanded)::before {
-    transform: rotate(-90deg);
+.tree .expanded::before {
+    transform: rotate(0deg);
 }
 
-/* 选中文件时只高亮显示选中的那个 */
 .file-list .selected {
     background-color: #cce5ff;
-}
-
-/* 居中显示Markdown内容 */
-.markdown-content {
-    text-align: center; /* 添加居中显示 */
 }
