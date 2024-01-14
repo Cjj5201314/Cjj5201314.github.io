@@ -25,7 +25,7 @@ function buildTree(data, parentElement) {
         // 添加箭头图标
         if (item.type === 'dir' && item.children && item.children.length > 0) {
             listItem.innerHTML = '&#9654;'; // 右箭头表示可以展开
-            listItem.classList.add('expandable'); // 添加可展开样式
+            listItem.classList.add('expandable');
         }
 
         listItem.appendChild(textNode);
