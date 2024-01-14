@@ -21,6 +21,12 @@ function buildTree(data, parentElement) {
     data.forEach(item => {
         let listItem = document.createElement('li');
         let textNode = document.createTextNode(item.name);
+
+        // 添加箭头图标
+        if (item.type === 'dir' && item.children && item.children.length > 0) {
+            listItem.innerHTML = '&#9654;'; // 右箭头表示可以展开
+        }
+
         listItem.appendChild(textNode);
         listItem.className = item.type === 'file' ? 'file-item' : 'dir-item';
 
@@ -43,6 +49,13 @@ function buildTree(data, parentElement) {
             }
         } else if (item.name.endsWith('.md')) {
             listItem.addEventListener('click', function() {
+                // 移除所有已选中项的样式
+                document.querySelectorAll('.file-item.selected').forEach(el => {
+                    el.classList.remove('selected');
+                });
+
+                // 为当前点击项添加选中样式
+                listItem.classList.add('selected');
                 fetchFileContent(item.path);
             });
         }
