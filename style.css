@@ -71,18 +71,22 @@
 }
 
 .tree .expandable::before {
-    content: '\25B8'; /* 默认箭头为右箭头 */
+    content: '▼'; /* 折叠时的箭头 */
     display: inline-block;
     margin-right: 5px;
-    transform: rotate(90deg);
     transition: transform 0.3s ease-in-out;
 }
 
-.tree .expanded::before {
-    transform: rotate(0deg);
+.tree .expandable:not(.expanded)::before {
+    transform: rotate(-90deg);
 }
 
-/* 添加样式用于突出显示所选的文件 */
+/* 选中文件时只高亮显示选中的那个 */
 .file-list .selected {
     background-color: #cce5ff;
+}
+
+/* 居中显示Markdown内容 */
+.markdown-content {
+    text-align: center; /* 添加居中显示 */
 }
