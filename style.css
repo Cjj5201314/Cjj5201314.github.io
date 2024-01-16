@@ -16,17 +16,24 @@
 }
 
 .toggle-button {
-    display: none;
-    position: absolute;
+    display: block;
+    position: fixed;
     top: 10px;
     left: 10px;
+    z-index: 1; /* 保证按钮位于最上层 */
+    padding: 8px 16px;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
 }
 
 /* 添加样式用于突出显示 Markdown 内容 */
 .markdown-content {
     padding: 50px;
     width: 1330px;
-    background-color: #6b6666;
+    background-color: #c9c6c6;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -66,30 +73,8 @@
 
 .file-list{
     padding: 16px;
+    padding-top: 50px;
 }
-
-/* 添加箭头样式 */
-.tree .expandable {
-    cursor: pointer;
-    user-select: none;
-    position: relative; /* 添加相对定位 */
-}
-
-.tree .expandable > span::before {
-    content: '\25B8'; /* 默认箭头为右箭头 */
-    display: inline-block;
-    margin-right: 5px;
-    transition: transform 0.3s ease-in-out;
-    position: absolute; /* 绝对定位相对于父元素 */
-    left: -15px; /* 调整箭头位置 */
-    top: 50%; /* 竖直居中 */
-    transform: translateY(-50%);
-}
-
-.tree .expanded > span::before {
-    transform: rotate(90deg); /* 改变箭头朝向 */
-}
-
 
 .file-list .selected {
     background-color: #cce5ff;
@@ -100,3 +85,4 @@ ul, li {
     margin: 0;
     padding: 0;
 }
+
