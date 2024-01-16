@@ -2,16 +2,22 @@
 document.getElementById('toggleButton').addEventListener('click', function() {
     var sidebar = document.getElementById('sidebar');
     var content = document.getElementById('content');
+    var repoFiles = document.getElementById('repoFiles');
+    var toggleButton = document.getElementById('toggleButton');
+
     if (sidebar.style.width === '250px') {
         sidebar.style.width = '0';
-        sidebar.style.visibility = 'hidden';
+        repoFiles.style.visibility = 'hidden'; // 仅隐藏文件列表
         content.style.marginLeft = '0';
+        toggleButton.textContent = '展开'; // 设置按钮文本为展开
     } else {
         sidebar.style.width = '250px';
-        sidebar.style.visibility = 'visible';
+        repoFiles.style.visibility = 'visible'; // 使文件列表可见
         content.style.marginLeft = '250px';
+        toggleButton.textContent = '收缩'; // 设置按钮文本为收缩
     }
 });
+
 
 // 构建树形结构
 function buildTree(data, parentElement) {
@@ -24,8 +30,10 @@ function buildTree(data, parentElement) {
 
         // 添加箭头图标
         if (item.type === 'dir' && item.children && item.children.length > 0) {
-            listItem.innerHTML = '&#9654;'; // 右箭头表示可以展开
-            listItem.classList.add('expandable');
+            let arrowSpan = document.createElement('span');
+            arrowSpan.innerHTML = '&#9654;'; // 右箭头表示可以展开
+            arrowSpan.classList.add('expandable');
+            listItem.appendChild(arrowSpan);
         }
 
         listItem.appendChild(textNode);
@@ -35,11 +43,14 @@ function buildTree(data, parentElement) {
             listItem.addEventListener('click', function(e) {
                 e.stopPropagation();
                 if (!listItem.classList.contains('expanded')) {
+                    listItem.classList.add('expanded');
                     fetchRepoFiles(item.path, listItem);
                 } else {
-                    let subTree = listItem.getElementsByTagName('ul')[0];
-                    listItem.removeChild(subTree);
                     listItem.classList.remove('expanded');
+                    let subTree = listItem.getElementsByTagName('ul')[0];
+                    if (subTree) {
+                        listItem.removeChild(subTree);
+                    }
                 }
             });
 
@@ -50,7 +61,6 @@ function buildTree(data, parentElement) {
             }
         } else if (item.name.endsWith('.md')) {
             listItem.addEventListener('click', function(e) {
-                // 阻止事件传播，避免触发父级目录的点击事件
                 e.stopPropagation();
 
                 // 移除所有已选中项的样式
@@ -69,7 +79,6 @@ function buildTree(data, parentElement) {
 
     if (parentElement) {
         parentElement.appendChild(tree);
-        parentElement.classList.add('expanded');
     } else {
         let filesList = document.getElementById('repoFiles');
         filesList.innerHTML = '';
@@ -78,6 +87,7 @@ function buildTree(data, parentElement) {
 
     return tree;
 }
+
 
 // 获取仓库中“学习资料”文件夹的内容
 function fetchRepoFiles(path = '学习资料', parentElement) {
@@ -137,4 +147,13 @@ function fetchFileContent(filePath) {
 // 初始加载学习资料
 window.onload = function() {
     fetchRepoFiles();
+
+     // 设置初始按钮文本
+     var toggleButton = document.getElementById('toggleButton');
+     if (document.getElementById('sidebar').style.width === '250px') {
+         toggleButton.textContent = '收缩';
+     } else {
+         toggleButton.textContent = '展开';
+     }
+
 };
