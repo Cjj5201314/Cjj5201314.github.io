@@ -60,3 +60,7 @@ docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-
 
 **在这篇文章中，我介绍如何在 Windows 上安装 Ollama WebUI 的入门基础知识**。**Ollama 以其简单直观的操作界面、智能识别并利用硬件资源的自动加速功能以及提供丰富涵盖各种任务和场景的预训练模型库，独树一帜，成为任何对人工智能和机器学习感兴趣的人的宝贵工具。**
 
+上面需要下载的两个安装包，如果觉得访问网址慢就使用我上传到夸克的安装包
+
+链接：https://pan.quark.cn/s/3b8ad26a1a00
+提取码：Cd9Y
