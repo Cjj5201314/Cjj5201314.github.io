@@ -1,4 +1,14 @@
 # 新建Git仓库后！如何将本地项目直接推送上到git仓库中
+总体方法：
+1、初始化：git init
+2、创建并切换分支：git checkout -b develop
+3、添加远程仓库地址：git remote add origin 你的远程仓库地址
+4、暂存所有改动：git add .
+5、暂存特定文件：git add path/to/file1 path/to/dir/*
+6、git commit -m "描述这次改动的内容"
+7、提交：git commit -m "描述这次改动的内容"
+8、强制推送到远程 develop：git push -u origin develop --force
+
 ### 一、在GitHub上面新建一个仓库，这里就不演示了
 ### 二、来到本地仓库
 
